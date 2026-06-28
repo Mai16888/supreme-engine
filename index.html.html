@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日健康打卡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background-color: #f7f3eb;
+            padding: 30px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 40px;
+            font-size: 26px;
+        }
+        .task-item {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .task-name {
+            font-size: 18px;
+            color: #333;
+        }
+        .task-tip {
+            font-size: 13px;
+            color: #666;
+            margin-top: 6px;
+        }
+        .task-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .btn-normal {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #94a3b8;
+            color: white;
+            border: none;
+            border-radius: 99px;
+            padding: 10px 26px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-done {
+            background: #cbd5e1;
+            cursor: default;
+        }
+        .footer-box {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .footer-box img {
+            width: 120px;
+            opacity: 0.85;
+        }
+        .footer-text {
+            font-size: 13px;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>每日健康打卡</h1>
+
+    <!-- 1 起床打卡 -->
+    <div class="task-item">
+        <div class="task-name">起床打卡</div>
+        <div class="task-tip" id="wakeTip">未打卡，按时早起开启一天</div>
+        <div class="task-time" id="wakeTime"></div>
+        <button class="btn-normal" id="btnWake" onclick="clockWake()">打卡</button>
+    </div>
+
+    <!-- 2 吃早餐 -->
+    <div class="task-item">
+        <div class="task-name">吃早餐</div>
+        <div class="task-tip" id="breakTip">未打卡，按时吃早餐养胃哦</div>
+        <div class="task-time" id="breakTime"></div>
+        <button class="btn-normal" id="btnBreak" onclick="clockBreak()">打卡</button>
+    </div>
+
+    <!-- 3 足量喝水 -->
+    <div class="task-item">
+        <div class="task-name">足量喝水</div>
+        <div class="task-tip" id="waterTip">未打卡，每天1500ml温水更健康</div>
+        <div class="task-time" id="waterTime"></div>
+        <button class="btn-normal" id="btnWater" onclick="clockWater()">打卡</button>
+    </div>
+
+    <!-- 4 排便记录 -->
+    <div class="task-item">
+        <div class="task-name">排便记录</div>
+        <div class="task-tip" id="poopTip">未记录，规律排便肠道更舒服</div>
+        <div class="task-time" id="poopTime"></div>
+        <button class="btn-normal" id="btnPoop" onclick="clockPoop()">开始排便</button>
+    </div>
+
+    <!-- 5 吃午餐 -->
+    <div class="task-item">
+        <div class="task-name">吃午餐</div>
+        <div class="task-tip" id="lunchTip">未打卡，荤素搭配营养均衡</div>
+        <div class="task-time" id="lunchTime"></div>
+        <button class="btn-normal" id="btnLunch" onclick="clockLunch()">打卡</button>
+    </div>
+
+    <!-- 6 吃晚餐 -->
+    <div class="task-item">
+        <div class="task-name">吃晚餐</div>
+        <div class="task-tip" id="dinnerTip">未打卡，晚餐七分饱，睡前不积食</div>
+        <div class="task-time" id="dinnerTime"></div>
+        <button class="btn-normal" id="btnDinner" onclick="clockDinner()">打卡</button>
+    </div>
+
+    <!-- 7 睡觉打卡 -->
+    <div class="task-item">
+        <div class="task-name">睡觉打卡</div>
+        <div class="task-tip" id="sleepTip">未打卡，早睡养足精神</div>
+        <div class="task-time" id="sleepTime"></div>
+        <button class="btn-normal" id="btnSleep" onclick="sleepClockIn()">打卡</button>
+    </div>
+
+    <!-- 底部GIF小人区域 -->
+    <div class="footer-box">
+        <img src="https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif" alt="卡通小人">
+        <p class="footer-text">今日也要好好打卡 ✨</p>
+    </div>
+
+<script>
+// 每日文案库，打卡完成随机抽取
+const textLib = {
+    wake: [
+        "☀️ 太棒啦！早起的人会收获一整天好心情",
+        "🌅 准时起床，自律的你闪闪发光",
+        "✨ 战胜赖床成功，今天也要元气满满",
+        "🌤 清晨空气超清新，早起的你超厉害",
+        "☕ 早起解锁完整一天，继续保持好习惯"
+    ],
+    breakfast: [
+        "🥞 好好吃早餐，肠胃一天无负担",
+        "🥛 营养早餐到位，活力直接拉满",
+        "🍞 按时进食超自律，身体会感谢你",
+        "🥚 认真对待每一餐，健康稳稳拿捏",
+        "🥐 早餐打卡完成，开启元气上午"
+    ],
+    water: [
+        "💧 多喝水代谢更好，皮肤水润透亮",
+        "🫧 补水打卡成功，身体拒绝干燥疲惫",
+        "🥤 温水喝够量，整个人清爽不犯困",
+        "🌊 坚持每日补水，长期身体更轻盈",
+        "💦 喝水好习惯，慢性病远离你"
+    ],
+    poop: [
+        "🪴 肠道通畅一身轻，代谢超顺畅",
+        "🌿 规律排便，身体毒素顺利排出",
+        "🍃 肠胃状态满分，自律藏在细节里",
+        "🌱 肠道健康是根本，今天表现满分",
+        "🍀 养成固定排便，减少身体负担"
+    ],
+    lunch: [
+        "🍱 均衡午餐补给，下午精力不滑坡",
+        "🥗 荤素搭配到位，营养均衡超优秀",
+        "🍚 好好吃饭是最低成本养生方式",
+        "🥘 午餐打卡完成，平稳度过午后时光",
+        "🥙 认真吃饭的人，生活都很温柔"
+    ],
+    dinner: [
+        "🍲 七分饱晚餐，睡眠质量直线提升",
+        "🥣 清淡晚餐减轻肠胃夜间负担",
+        "🍠 晚餐按时适量，体态更轻盈",
+        "🥗 晚餐自律到位，不用为宵夜烦恼",
+        "🍛 好好收尾三餐，健康作息闭环"
+    ],
+    sleep: [
+        "🌙 准时休息，睡眠修复全身细胞",
+        "💤 放下手机早睡，明天精力爆棚",
+        "🌌 优质睡眠是最好的天然护肤品",
+        "✨ 坚持早睡，情绪稳定气色变好",
+        "🌠 好好睡觉，是对自己温柔的馈赠"
+    ]
+};
+
+// 获取随机鼓励语
+function getRandomText(type) {
+    const arr = textLib[type];
+    const randomIdx = Math.floor(Math.random() * arr.length);
+    return arr[randomIdx];
+}
+
+// 存储初始化
+let today = new Date().toLocaleDateString();
+let store = JSON.parse(localStorage.getItem("clockStore")) || {
+    date: today,
+    finished: {
+        wake: false,
+        breakfast: false,
+        water: false,
+        poop: false,
+        lunch: false,
+        dinner: false,
+        sleep: false
+    },
+    wakeUpTime: "",
+    breakTime: "",
+    waterTime: "",
+    poopTime: "",
+    lunchTime: "",
+    dinnerTime: "",
+    sleepTime: ""
+};
+
+// 跨天自动清空打卡记录
+if (store.date !== today) {
+    store = {
+        date: today,
+        finished: {wake:false,breakfast:false,water:false,poop:false,lunch:false,dinner:false,sleep:false},
+        wakeUpTime:"",breakTime:"",waterTime:"",poopTime:"",lunchTime:"",dinnerTime:"",sleepTime:""
+    };
+    localStorage.setItem("clockStore", JSON.stringify(store));
+}
+
+// 1 起床打卡
+function clockWake() {
+    store.finished.wake = true;
+    store.wakeUpTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 2 早餐
+function clockBreak() {
+    store.finished.breakfast = true;
+    store.breakTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 3 喝水
+function clockWater() {
+    store.finished.water = true;
+    store.waterTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 4 排便
+function clockPoop() {
+    store.finished.poop = true;
+    store.poopTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 5 午餐
+function clockLunch() {
+    store.finished.lunch = true;
+    store.lunchTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 6 晚餐
+function clockDinner() {
+    store.finished.dinner = true;
+    store.dinnerTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 7 睡觉
+function sleepClockIn() {
+    store.finished.sleep = true;
+    store.sleepTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+
+// 页面渲染核心逻辑
+function renderPage() {
+    // 起床
+    if(store.finished.wake){
+        document.getElementById("btnWake").className = "btn-normal btn-done";
+        document.getElementById("btnWake").innerText = "已打卡";
+        document.getElementById("wakeTip").innerText = getRandomText("wake");
+        document.getElementById("wakeTime").innerText = "打卡时间："+store.wakeUpTime;
+    }
+    // 早餐
+    if(store.finished.breakfast){
+        document.getElementById("btnBreak").className = "btn-normal btn-done";
+        document.getElementById("btnBreak").innerText = "已打卡";
+        document.getElementById("breakTip").innerText = getRandomText("breakfast");
+        document.getElementById("breakTime").innerText = "打卡时间："+store.breakTime;
+    }
+    // 喝水
+    if(store.finished.water){
+        document.getElementById("btnWater").className = "btn-normal btn-done";
+        document.getElementById("btnWater").innerText = "已打卡";
+        document.getElementById("waterTip").innerText = getRandomText("water");
+        document.getElementById("waterTime").innerText = "打卡时间："+store.waterTime;
+    }
+    // 排便
+    if(store.finished.poop){
+        document.getElementById("btnPoop").className = "btn-normal btn-done";
+        document.getElementById("btnPoop").innerText = "已记录";
+        document.getElementById("poopTip").innerText = getRandomText("poop");
+        document.getElementById("poopTime").innerText = "记录时间："+store.poopTime;
+    }
+    // 午餐
+    if(store.finished.lunch){
+        document.getElementById("btnLunch").className = "btn-normal btn-done";
+        document.getElementById("btnLunch").innerText = "已打卡";
+        document.getElementById("lunchTip").innerText = getRandomText("lunch");
+        document.getElementById("lunchTime").innerText = "打卡时间："+store.lunchTime;
+    }
+    // 晚餐
+    if(store.finished.dinner){
+        document.getElementById("btnDinner").className = "btn-normal btn-done";
+        document.getElementById("btnDinner").innerText = "已打卡";
+        document.getElementById("dinnerTip").innerText = getRandomText("dinner");
+        document.getElementById("dinnerTime").innerText = "打卡时间："+store.dinnerTime;
+    }
+    // 睡觉
+    if(store.finished.sleep){
+        document.getElementById("btnSleep").className = "btn-normal btn-done";
+        document.getElementById("btnSleep").innerText = "已打卡";
+        document.getElementById("sleepTip").innerText = getRandomText("sleep");
+        document.getElementById("sleepTime").innerText = "打卡时间："+store.sleepTime;
+    }
+}
+
+// 页面加载自动渲染
+renderPage();
+</script>
+</body>
+</html>
