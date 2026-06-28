@@ -121,8 +121,8 @@
             cursor: pointer;
             font-size: 15px;
         }
+
     </style>
-</head>
 <body>
     <div class="header">
         <h1>每日健康打卡</h1>
@@ -164,9 +164,30 @@
         <div class="task-name">吃晚餐</div>
         <button class="btn-normal" id="btnDinner" onclick="commonClock('dinner')">打卡</button>
     </div>
+<div class="sleep-card">
+  <h3>🌙 睡觉打卡</h3>
+  <p id="sleep-tip"></p>
+</div>
 
+<script>
+  // 获取当前小时
+ // 获取当前小时
+const hour = new Date().getHours();
+let tipText = "";
+// 根据时间段匹配带emoji鼓励语
+if (hour >= 22 && hour < 24) {
+  tipText = "✅ 很棒！早睡养皮肤，今天完美达标~";
+} else if (hour >= 0 && hour < 7) {
+  tipText = "💤 晚安啦，好好休息，明天活力满满！";
+} else if (hour >= 7 && hour < 10) {
+  tipText = "☀️ 起床成功！睡饱一整天都舒服~";
+} else {
+  tipText = "⏳ 还没到休息时间，记得晚上早点睡觉哦！";
+}
+document.getElementById("sleep-tip").innerText = tipText;
+</script>
     <div class="progress-box">
-        今日完成进度：<span id="progressText">0 / 6</span>
+        今日完成进度：<span id="progressText">0 / 7</span>
     </div>
 
     <!-- 鼓励语弹窗 -->
