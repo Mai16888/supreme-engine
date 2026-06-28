@@ -164,27 +164,11 @@
         <div class="task-name">吃晚餐</div>
         <button class="btn-normal" id="btnDinner" onclick="commonClock('dinner')">打卡</button>
     </div>
-<div class="sleep-card">
-  <h3>🌙 睡觉打卡</h3>
-  <p id="sleep-tip"></p>
+<div class="task-item">
+    <div class="task-name">睡觉打卡</div>
+    <div class="task-tip" id="sleepTip">加载提示中...</div>
+    <button class="btn-normal" onclick="sleepClockIn()">打卡</button>
 </div>
-
-<script>
-  // 获取当前小时
- // 获取当前小时
-const hour = new Date().getHours();
-let tipText = "";
-// 根据时间段匹配带emoji鼓励语
-if (hour >= 22 && hour < 24) {
-  tipText = "✅ 很棒！早睡养皮肤，今天完美达标~";
-} else if (hour >= 0 && hour < 7) {
-  tipText = "💤 晚安啦，好好休息，明天活力满满！";
-} else if (hour >= 7 && hour < 10) {
-  tipText = "☀️ 起床成功！睡饱一整天都舒服~";
-} else {
-  tipText = "⏳ 还没到休息时间，记得晚上早点睡觉哦！";
-}
-document.getElementById("sleep-tip").innerText = tipText;
 </script>
     <div class="progress-box">
         今日完成进度：<span id="progressText">0 / 7</span>
@@ -318,8 +302,14 @@ document.getElementById("sleep-tip").innerText = tipText;
             defBtn.innerText = "结束排便";
             startDefecateTimer();
         }
+        // 睡觉按钮
+if(store.finished.sleep){
+    document.getElementById("btnSleep").className = "btn-normal btn-done";
+    document.getElementById("btnSleep").innerText = "已打卡";
+    document.getElementById("sleepTime").innerText = store.sleepTime;
+}
         // 进度统计
-        const total = 6;
+        const total = 7;
         const doneNum = Object.keys(store.finished).length;
         document.getElementById("progressText").innerText = doneNum + " / " + total;
     }
@@ -407,7 +397,33 @@ document.getElementById("sleep-tip").innerText = tipText;
             document.getElementById("defecateTime").innerText = "已计时："+dur+" 秒";
         },1000);
     }
+// 睡眠时段动态文案更新
+function updateSleepTip() {
+    const hour = new Date().getHours();
+    const tipDom = document.getElementById("sleepTip");
+    let text = "";
+    if (hour >= 22 || hour < 6) {
+        text = "🌙 晚安啦，好好休息，明天活力满满！";
+    } else if (hour >= 6 && hour < 12) {
+        text = "☀️ 现在是白天，先好好活动，晚上再来打卡睡觉";
+    } else if (hour >=12 && hour < 18) {
+        text = "🌤 午后时光，记得早睡不要熬夜";
+    } else {
+        text = "🌆 夜晚将至，准备放下手机早点休息";
+    }
+    tipDom.innerText = text;
+}
 
+// 页面加载自动执行一次
+updateSleepTip();
+// 每分钟自动刷新文案
+setInterval(updateSleepTip, 60000);
+
+// 睡觉打卡点击函数（和其他打卡逻辑保持统一）
+function sleepClockIn() {
+    alert("完成睡觉打卡！");
+    // 这里可以复制你其他打卡按钮的存储逻辑替换alert
+}
     // 页面初始化渲染
     renderPage();
 </script>
