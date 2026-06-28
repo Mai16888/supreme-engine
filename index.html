@@ -3,436 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>低饱和多巴胺 · 每日健康打卡</title>
+    <title>每日健康打卡</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, "Microsoft Yahei", sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
         }
         body {
-            /* 低饱和多巴胺柔和底色 */
-            background-color: #f6f3ef;
-            max-width: 540px;
-            margin: 40px auto;
-            padding: 0 20px;
+            background-color: #f7f3eb;
+            padding: 30px 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        .header {
+        h1 {
             text-align: center;
+            color: #444;
             margin-bottom: 40px;
-        }
-        .header h1 {
-            color: #5a5550;
             font-size: 26px;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-        .date-text {
-            color: #88837e;
-            font-size: 15px;
         }
         .task-item {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 20px 24px;
-            margin-bottom: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 3px 12px rgba(120, 110, 100, 0.08);
-            border: 1px solid #eeebe8;
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .task-name {
-            font-size: 17px;
-            color: #4a4642;
-            font-weight: 500;
+            font-size: 18px;
+            color: #333;
         }
-        .time-show {
-            font-size: 14px;
-            color: #99948f;
-            margin-top: 5px;
+        .task-tip {
+            font-size: 13px;
+            color: #666;
+            margin-top: 6px;
         }
-        /* 低饱和多巴胺按钮色系 */
+        .task-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
         .btn-normal {
-            padding: 10px 22px;
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #94a3b8;
+            color: white;
             border: none;
-            border-radius: 16px;
-            background-color: #8ca8b8;
-            color: #fff;
+            border-radius: 99px;
+            padding: 10px 26px;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 15px;
-            transition: 0.2s ease;
-        }
-        .btn-normal:hover {
-            opacity: 0.9;
         }
         .btn-done {
-            background-color: #9bb89c;
+            background: #cbd5e1;
             cursor: default;
         }
-        .btn-timing {
-            background-color: #d4a88f;
-        }
-        .progress-box {
+        .footer-box {
             text-align: center;
-            margin-top: 45px;
-            font-size: 17px;
-            color: #5a5550;
-            padding: 12px;
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 2px 8px rgba(120, 110, 100, 0.06);
+            margin-top: 40px;
         }
-        /* 弹窗样式 低饱和卡通风 */
-        .modal-mask {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: rgba(90, 85, 80, 0.45);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
+        .footer-box img {
+            width: 120px;
+            opacity: 0.85;
         }
-        .modal-card {
-            background: #fffdfb;
-            width: 88%;
-            max-width: 400px;
-            padding: 32px 28px;
-            border-radius: 22px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(90, 85, 80, 0.12);
+        .footer-text {
+            font-size: 13px;
+            color: #888;
+            margin-top: 10px;
         }
-        .modal-text {
-            font-size: 17px;
-            color: #4a4642;
-            line-height: 1.75;
-            margin-bottom: 28px;
-        }
-        .modal-close {
-            padding: 11px 30px;
-            border: none;
-            background-color: #8ca8b8;
-            color: white;
-            border-radius: 16px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
     </style>
+</head>
 <body>
-    <div class="header">
-        <h1>每日健康打卡</h1>
-        <div class="date-text" id="todayDate"></div>
-    </div>
+    <h1>每日健康打卡</h1>
 
+    <!-- 1 起床打卡 -->
     <div class="task-item">
-        <div>
-            <div class="task-name">起床打卡</div>
-            <div class="time-show" id="wakeTime"></div>
-        </div>
-        <button class="btn-normal" id="btnWake" onclick="clockWakeUp()">打卡</button>
+        <div class="task-name">起床打卡</div>
+        <div class="task-tip" id="wakeTip">加载提示中...</div>
+        <div class="task-time" id="wakeTime"></div>
+        <button class="btn-normal" id="btnWake" onclick="clockWake()">打卡</button>
     </div>
 
+    <!-- 2 吃早餐 -->
     <div class="task-item">
         <div class="task-name">吃早餐</div>
-        <button class="btn-normal" id="btnBreakfast" onclick="commonClock('breakfast')">打卡</button>
+        <div class="task-tip" id="breakTip">按时吃早餐养胃哦</div>
+        <div class="task-time" id="breakTime"></div>
+        <button class="btn-normal" id="btnBreak" onclick="clockBreak()">打卡</button>
     </div>
 
+    <!-- 3 足量喝水 -->
     <div class="task-item">
         <div class="task-name">足量喝水</div>
-        <button class="btn-normal" id="btnWater" onclick="commonClock('water')">打卡</button>
+        <div class="task-tip" id="waterTip">每天1500ml温水更健康</div>
+        <div class="task-time" id="waterTime"></div>
+        <button class="btn-normal" id="btnWater" onclick="clockWater()">打卡</button>
     </div>
 
+    <!-- 4 排便记录 -->
     <div class="task-item">
-        <div>
-            <div class="task-name">排便记录</div>
-            <div class="time-show" id="defecateTime"></div>
-        </div>
-        <button class="btn-normal" id="btnDefecate" onclick="toggleDefecateClock()">开始排便</button>
+        <div class="task-name">排便记录</div>
+        <div class="task-tip" id="poopTip">规律排便肠道更舒服</div>
+        <div class="task-time" id="poopTime"></div>
+        <button class="btn-normal" id="btnPoop" onclick="clockPoop()">开始排便</button>
     </div>
 
+    <!-- 5 吃午餐 -->
     <div class="task-item">
         <div class="task-name">吃午餐</div>
-        <button class="btn-normal" id="btnLunch" onclick="commonClock('lunch')">打卡</button>
+        <div class="task-tip" id="lunchTip">荤素搭配营养均衡</div>
+        <div class="task-time" id="lunchTime"></div>
+        <button class="btn-normal" id="btnLunch" onclick="clockLunch()">打卡</button>
     </div>
 
+    <!-- 6 吃晚餐 -->
     <div class="task-item">
         <div class="task-name">吃晚餐</div>
-        <button class="btn-normal" id="btnDinner" onclick="commonClock('dinner')">打卡</button>
-    </div>
-<div class="task-item">
-    <div class="task-name">睡觉打卡</div>
-    <div class="task-tip" id="sleepTip">加载提示中...</div>
-    <button class="btn-normal" onclick="sleepClockIn()">打卡</button>
-</div>
-</script>
-    <div class="progress-box">
-        今日完成进度：<span id="progressText">0 / 7</span>
+        <div class="task-tip" id="dinnerTip">晚餐七分饱，睡前不积食</div>
+        <div class="task-time" id="dinnerTime"></div>
+        <button class="btn-normal" id="btnDinner" onclick="clockDinner()">打卡</button>
     </div>
 
-    <!-- 鼓励语弹窗 -->
-    <div class="modal-mask" id="modalMask">
-        <div class="modal-card">
-            <p class="modal-text" id="modalContent"></p>
-            <button class="modal-close" onclick="closeModal()">确定</button>
-        </div>
+    <!-- 7 睡觉打卡（分时动态提示） -->
+    <div class="task-item">
+        <div class="task-name">睡觉打卡</div>
+        <div class="task-tip" id="sleepTip">加载提示中...</div>
+        <div class="task-time" id="sleepTime"></div>
+        <button class="btn-normal" id="btnSleep" onclick="sleepClockIn()">打卡</button>
+    </div>
+
+    <!-- 底部GIF小人区域 -->
+    <div class="footer-box">
+        <!-- 卡通动态小人GIF -->
+        <img src="https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif" alt="卡通小人">
+        <p class="footer-text">今日也要好好打卡 ✨</p>
     </div>
 
 <script>
-    // ========== 文案库 全部添加适配emoji表情 ==========
-    const wakeWord6to8 = [
-        "🌅太棒了，早起的时光完全属于你，自律值直接拉满！",
-        "☀️清晨的空气就是最好的礼物，今天一定会事事顺遂。",
-        "✨别人还在熟睡，你已经开启充实的一天，太厉害了。",
-        "⏰抓住清晨的黄金时间，今天的效率一定会超乎想象。",
-        "🌤️早起不是煎熬，是你悄悄超越别人的小秘诀。",
-        "🌞迎着晨光开启一天，你的状态已经赢在起点。",
-        "🧘规律早起，你的身体和精神都会越来越稳定。",
-        "📖清晨安静的时光，最适合沉淀自己、提升自己。"
-    ];
-    const wakeWord8to930 = [
-        "🍃作息刚刚好，平稳从容地开启充实的一天。",
-        "👍按时醒来，保持稳定的生活节奏就已经很棒了。",
-        "💤睡眠充足，精神饱满，今天可以安心完成计划。",
-        "🌿不早不晚，刚刚好的作息，舒服又健康。",
-        "📅日常作息保持稳定，就是最踏实的自律。",
-        "😊元气满满上线，放平心态，认真过完今天就好。",
-        "🍵作息规律，身体没有负担，一整天都会很轻松。",
-        "🌼自然醒的状态刚刚好，不用追赶时间，从容度日。"
-    ];
-    const wakeWord930to11 = [
-        "😌睡得充足也不错，接下来好好把握白天的时间吧。",
-        "⏳稍微起晚了一点，记得合理规划剩下的日程哦。",
-        "💪睡饱才有精力，抓紧白天的时间把计划补上。",
-        "😉偶尔睡懒觉没关系，调整状态，接下来高效行动。",
-        "🛌充足的睡眠也是一种放松，别焦虑，认真做好接下来的事。",
-        "🤍起床稍晚不用自责，把握当下就是最好的选择。",
-        "🎯好好休整完毕，接下来集中精力完成今日任务。",
-        "🌙偶尔放松作息没问题，记得今晚稍微早睡一点。"
-    ];
-    const wakeWordAfter11 = [
-        "🌙熬夜很伤身体，今晚早点休息，明天争取早起一点。",
-        "⚡白天已经过半，高效利用剩余时间弥补回来吧。",
-        "🧹睡太久容易精神昏沉，起身活动一下唤醒身体吧。",
-        "🛏️尽量减少熬夜，长期规律作息才是长久的健康之道。",
-        "📝今天作息稍有拖沓，把任务高效完成，今晚好好早睡。",
-        "😴懒觉虽舒服，但是规律作息会让你一整天更清爽。",
-        "🔥从现在开始打起精神，把白天的时间充分利用起来。",
-        "🔄调整作息节奏，慢慢养成早睡早起的好习惯。"
-    ];
-    const defecateWord = [
-        "✅肠道通畅，身体无负担，健康状态稳稳在线。",
-        "🧻规律排便，是守护肠胃健康最简单的方式。",
-        "🔁养成固定排便习惯，你的代谢会越来越健康。",
-        "🌬️身体排出废物，整个人都会变得轻松舒适。",
-        "📈小小的健康习惯，日积月累会给你巨大回报。",
-        "😌肠胃舒适，一整天的精神状态都会格外好。",
-        "💚坚持规律习惯，远离肠胃不适，自在每一天。",
-        "💡健康藏在细节里，这个好习惯一定要保持下去。"
-    ];
-    const commonWord = [
-        "🍚好好吃饭，照顾好自己就是人生最重要的事。",
-        "💪坚持健康的小习惯，日积月累身体会越来越棒。",
-        "📝平凡日常里的每一次打卡，都是慢慢变好的印记。",
-        "✨保持生活的仪式感，认真对待三餐与日常。",
-        "🌱微小的坚持，日积月累终将变成刻在身上的好习惯。",
-        "💧规律补水，给身体充足的水分，活力满满一整天。",
-        "🥣三餐定时，肠胃舒适，身体自然会回馈你健康。",
-        "⏳自律从来不是大事，就是日复一日的日常打卡。",
-        "❤️善待身体，好好吃饭多喝水，就是性价比最高的投资。",
-        "⏰日常的小小坚持，时间会看见你的所有努力。",
-        "🌿把健康融入日常，不用刻意自律，习惯自然成型。",
-        "🌟认真生活的人，总能在平凡日子里收获惊喜。",
-        "🔍细节决定健康，你日复一日的坚持格外珍贵。",
-        "📊持续做好日常小事，你的身体状态只会越来越好。",
-        "⚡按时补给能量，身体有底气，做事更有底气。",
-        "🥤多喝水、好好吃饭，最简单也最有效的养生方式。",
-        "🤍不必追求极致，稳定坚持日常习惯就已经足够优秀。",
-        "🎉今日又完成一项打卡，距离更好的自己又近一步。",
-        "🛤️健康没有捷径，只有日复一日脚踏实地的坚持。",
-        "🧱你的每一次打卡，都在为长久的健康铺路。"
-    ];
+// 本地存储初始化
+let store = JSON.parse(localStorage.getItem("clockStore")) || {
+    finished: {
+        wake: false,
+        breakfast: false,
+        water: false,
+        poop: false,
+        lunch: false,
+        dinner: false,
+        sleep: false
+    },
+    wakeUpTime: "",
+    breakTime: "",
+    waterTime: "",
+    poopTime: "",
+    lunchTime: "",
+    dinnerTime: "",
+    sleepTime: ""
+};
 
-    // 初始化本地存储
-    let today = new Date().toLocaleDateString();
-    let store = JSON.parse(localStorage.getItem("healthClock")) || {};
-    if(store.date !== today){
-        store = {
-            date: today,
-            finished: {},
-            usedWords: [],
-            wakeUpTime: "",
-            defecateStart: null,
-            defecateDuration: 0
-        };
-        localStorage.setItem("healthClock", JSON.stringify(store));
-    }
-
-    // 页面渲染
-    function renderPage(){
-        document.getElementById("todayDate").innerText = new Date().toLocaleString("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
-        // 起床按钮
-        if(store.finished.wake){
-            document.getElementById("btnWake").className = "btn-normal btn-done";
-            document.getElementById("btnWake").innerText = "已打卡";
-            document.getElementById("wakeTime").innerText = store.wakeUpTime;
-        }
-        // 普通打卡项
-        const list = ["breakfast","water","lunch","dinner"];
-        list.forEach(key=>{
-            const btnId = "btn"+key.charAt(0).toUpperCase()+key.slice(1);
-            const btn = document.getElementById(btnId);
-            if(store.finished[key]){
-                btn.className = "btn-normal btn-done";
-                btn.innerText = "已打卡";
-            }
-        })
-        // 排便按钮
-        const defBtn = document.getElementById("btnDefecate");
-        if(store.finished.defecate){
-            defBtn.className = "btn-normal btn-done";
-            defBtn.innerText = "已完成";
-            document.getElementById("defecateTime").innerText = "时长："+store.defecateDuration+" 秒";
-        }else if(store.defecateStart){
-            defBtn.className = "btn-normal btn-timing";
-            defBtn.innerText = "结束排便";
-            startDefecateTimer();
-        }
-        // 睡觉按钮
-if(store.finished.sleep){
-    document.getElementById("btnSleep").className = "btn-normal btn-done";
-    document.getElementById("btnSleep").innerText = "已打卡";
-    document.getElementById("sleepTime").innerText = store.sleepTime;
+// 动态更新起床分时文案
+function updateWakeTip() {
+    const h = new Date().getHours();
+    const dom = document.getElementById("wakeTip");
+    if (h >= 5 && h < 9) dom.innerText = "☀️ 早起身体好，新的一天加油！";
+    else if (h >=9 && h <12) dom.innerText = "上午好，今天起得很棒！";
+    else dom.innerText = "🌙 现在不是起床时段，明天早点起哦";
 }
-        // 进度统计
-        const total = 7;
-        const doneNum = Object.keys(store.finished).length;
-        document.getElementById("progressText").innerText = doneNum + " / " + total;
-    }
 
-    // 弹窗控制
-    function showModal(text){
-        document.getElementById("modalContent").innerText = text;
-        document.getElementById("modalMask").style.display = "flex";
-    }
-    function closeModal(){
-        document.getElementById("modalMask").style.display = "none";
-    }
-
-    // 抽取当日未使用文案，保证不重复
-    function getUnusedWord(wordArray){
-        let available = wordArray.filter((_,idx)=>!store.usedWords.includes(idx));
-        if(available.length === 0) return wordArray[0];
-        let randomIdx = Math.floor(Math.random()*available.length);
-        let realIdx = wordArray.indexOf(available[randomIdx]);
-        store.usedWords.push(realIdx);
-        localStorage.setItem("healthClock", JSON.stringify(store));
-        return available[randomIdx];
-    }
-
-    // 起床打卡 分时判断
-    function clockWakeUp(){
-        if(store.finished.wake) return;
-        const now = new Date();
-        const hour = now.getHours();
-        const minute = now.getMinutes();
-        const timeStr = `${hour}:${String(minute).padStart(2,'0')}`;
-        store.finished.wake = true;
-        store.wakeUpTime = timeStr;
-        localStorage.setItem("healthClock", JSON.stringify(store));
-        renderPage();
-        let wordPool;
-        const totalMin = hour*60 + minute;
-        if(totalMin >= 360 && totalMin <= 480){
-            wordPool = wakeWord6to8;
-        }else if(totalMin > 480 && totalMin <= 570){
-            wordPool = wakeWord8to930;
-        }else if(totalMin > 570 && totalMin <= 660){
-            wordPool = wakeWord930to11;
-        }else{
-            wordPool = wakeWordAfter11;
-        }
-        const tip = getUnusedWord(wordPool);
-        showModal(tip);
-    }
-
-    // 三餐、喝水通用打卡
-    function commonClock(key){
-        if(store.finished[key]) return;
-        store.finished[key] = true;
-        localStorage.setItem("healthClock", JSON.stringify(store));
-        renderPage();
-        const tip = getUnusedWord(commonWord);
-        showModal(tip);
-    }
-
-    // 排便计时逻辑
-    let defecateTimer = null;
-    function toggleDefecateClock(){
-        if(store.finished.defecate) return;
-        if(!store.defecateStart){
-            store.defecateStart = Date.now();
-            localStorage.setItem("healthClock", JSON.stringify(store));
-            renderPage();
-            startDefecateTimer();
-        }else{
-            clearInterval(defecateTimer);
-            const duration = Math.round((Date.now() - store.defecateStart)/1000);
-            store.defecateDuration = duration;
-            store.finished.defecate = true;
-            store.defecateStart = null;
-            localStorage.setItem("healthClock", JSON.stringify(store));
-            renderPage();
-            const tip = getUnusedWord(defecateWord);
-            showModal(tip);
-        }
-    }git add .
-    function startDefecateTimer(){
-        defecateTimer = setInterval(()=>{
-            const dur = Math.round((Date.now() - store.defecateStart)/1000);
-            document.getElementById("defecateTime").innerText = "已计时："+dur+" 秒";
-        },1000);
-    }
-// 睡眠时段动态文案更新
+// 动态更新睡觉分时文案
 function updateSleepTip() {
-    const hour = new Date().getHours();
-    const tipDom = document.getElementById("sleepTip");
-    let text = "";
-    if (hour >= 22 || hour < 6) {
-        text = "🌙 晚安啦，好好休息，明天活力满满！";
-    } else if (hour >= 6 && hour < 12) {
-        text = "☀️ 现在是白天，先好好活动，晚上再来打卡睡觉";
-    } else if (hour >=12 && hour < 18) {
-        text = "🌤 午后时光，记得早睡不要熬夜";
-    } else {
-        text = "🌆 夜晚将至，准备放下手机早点休息";
-    }
-    tipDom.innerText = text;
+    const h = new Date().getHours();
+    const dom = document.getElementById("sleepTip");
+    if (h >= 22 || h < 6) dom.innerText = "🌙 晚安啦，好好休息，明天活力满满！";
+    else if (h >=6 && h <12) dom.innerText = "☀️ 白天好好活动，晚上再来睡觉打卡";
+    else if (h >=12 && h <18) dom.innerText = "🌤 午后多喝水，晚上尽量别熬夜";
+    else dom.innerText = "🌆 夜色将至，准备放下手机早点休息";
 }
 
-// 页面加载自动执行一次
+// 页面加载执行一次分时文案
+updateWakeTip();
 updateSleepTip();
-// 每分钟自动刷新文案
-setInterval(updateSleepTip, 60000);
+// 每分钟刷新提示文字
+setInterval(()=>{
+    updateWakeTip();
+    updateSleepTip();
+}, 60000);
 
-// 睡觉打卡点击函数（和其他打卡逻辑保持统一）
-function sleepClockIn() {
-    alert("完成睡觉打卡！");
-    // 这里可以复制你其他打卡按钮的存储逻辑替换alert
-}
-    // 页面初始化渲染
+// ========== 7个打卡点击函数 ==========
+// 1 起床
+function clockWake() {
+    store.finished.wake = true;
+    store.wakeUpTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
     renderPage();
+}
+// 2 早餐
+function clockBreak() {
+    store.finished.breakfast = true;
+    store.breakTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 3 喝水
+function clockWater() {
+    store.finished.water = true;
+    store.waterTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 4 排便
+function clockPoop() {
+    store.finished.poop = true;
+    store.poopTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 5 午餐
+function clockLunch() {
+    store.finished.lunch = true;
+    store.lunchTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 6 晚餐
+function clockDinner() {
+    store.finished.dinner = true;
+    store.dinnerTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+// 7 睡觉
+function sleepClockIn() {
+    store.finished.sleep = true;
+    store.sleepTime = new Date().toLocaleString();
+    localStorage.setItem("clockStore", JSON.stringify(store));
+    renderPage();
+}
+
+// 页面渲染函数：控制按钮变成「已打卡」+显示打卡时间
+function renderPage() {
+    // 起床按钮状态
+    if(store.finished.wake){
+        document.getElementById("btnWake").className = "btn-normal btn-done";
+        document.getElementById("btnWake").innerText = "已打卡";
+        document.getElementById("wakeTime").innerText = "打卡时间："+store.wakeUpTime;
+    }
+    // 早餐
+    if(store.finished.breakfast){
+        document.getElementById("btnBreak").className = "btn-normal btn-done";
+        document.getElementById("btnBreak").innerText = "已打卡";
+        document.getElementById("breakTime").innerText = "打卡时间："+store.breakTime;
+    }
+    // 喝水
+    if(store.finished.water){
+        document.getElementById("btnWater").className = "btn-normal btn-done";
+        document.getElementById("btnWater").innerText = "已打卡";
+        document.getElementById("waterTime").innerText = "打卡时间："+store.waterTime;
+    }
+    // 排便
+    if(store.finished.poop){
+        document.getElementById("btnPoop").className = "btn-normal btn-done";
+        document.getElementById("btnPoop").innerText = "已记录";
+        document.getElementById("poopTime").innerText = "记录时间："+store.poopTime;
+    }
+    // 午餐
+    if(store.finished.lunch){
+        document.getElementById("btnLunch").className = "btn-normal btn-done";
+        document.getElementById("btnLunch").innerText = "已打卡";
+        document.getElementById("lunchTime").innerText = "打卡时间："+store.lunchTime;
+    }
+    // 晚餐
+    if(store.finished.dinner){
+        document.getElementById("btnDinner").className = "btn-normal btn-done";
+        document.getElementById("btnDinner").innerText = "已打卡";
+        document.getElementById("dinnerTime").innerText = "打卡时间："+store.dinnerTime;
+    }
+    // 睡觉
+    if(store.finished.sleep){
+        document.getElementById("btnSleep").className = "btn-normal btn-done";
+        document.getElementById("btnSleep").innerText = "已打卡";
+        document.getElementById("sleepTime").innerText = "打卡时间："+store.sleepTime;
+    }
+}
+
+// 页面打开自动渲染一次状态
+renderPage();
 </script>
-<!-- 底部卡通动态小人 -->
-<div style="text-align:center; margin-top:40px;">
-  <img src="https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif" 
-       alt="卡通小人" 
-       style="width:120px; opacity:0.85;">
-  <p style="font-size:13px; color:#888;">今日也要好好打卡✨</p>
-</div>
 </body>
 </html>
