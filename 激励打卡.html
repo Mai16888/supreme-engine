@@ -400,7 +400,7 @@ document.getElementById("sleep-tip").innerText = tipText;
             const tip = getUnusedWord(defecateWord);
             showModal(tip);
         }
-    }
+    }git add .
     function startDefecateTimer(){
         defecateTimer = setInterval(()=>{
             const dur = Math.round((Date.now() - store.defecateStart)/1000);
@@ -411,5 +411,12 @@ document.getElementById("sleep-tip").innerText = tipText;
     // 页面初始化渲染
     renderPage();
 </script>
+<!-- 底部卡通动态小人 -->
+<div style="text-align:center; margin-top:40px;">
+  <img src="https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif" 
+       alt="卡通小人" 
+       style="width:120px; opacity:0.85;">
+  <p style="font-size:13px; color:#888;">今日也要好好打卡✨</p>
+</div>
 </body>
 </html>
